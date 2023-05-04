@@ -140,16 +140,16 @@ void insertion(int v[],int n)
 
 void shellSort(int arr[], int n)
 {
-    for (int gap = n/2; gap > 0; gap /= 2)
+    for (int gp = n/2; gp > 0; gp /= 2)
     {
-        for (int i = gap; i < n; i += 1)
+        for (int i = gp; i < n; i += 1)
         {
-            int temp = arr[i];
+            int tmp = arr[i];
             int j;            
-            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
-                arr[j] = arr[j - gap];
+            for (j = i; j >= gp && arr[j - gp] > tmp; j -= gp)
+                arr[j] = arr[j - gp];
               
-            arr[j] = temp;
+            arr[j] = tmp;
         }
     }
 }
