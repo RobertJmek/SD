@@ -54,6 +54,134 @@ public:
         }
     }
 
+    int heightCalc(Node* node)
+    {
+        if ( node->left_son && node->right_son )
+            return std::max( node->left_son->height, node->right_son->height ) + 1;
+        else if ( node->left_son )
+            return node->left_son->height + 1;
+        else if ( node->right_son )
+            return  node->right_son->height + 1;
+        else
+            return 0;
+    }
+
+    void rebalance(Node *node)
+    {
+        if (node == nullptr)
+            return;
+        if (Balance(node) > 1)
+        {
+            if ( Balance(node->left_son) > 0 )
+                RR(node);
+            else
+                LR(node);
+        }
+        else if (Balance(node) < -1)
+        {
+            if (Balance(node->right_son) < 0)
+                LL(node);
+            else
+                RL(node);
+        }
+        else
+            rebalance(node->parent);
+    }
+
+    void RR(Node* node)
+{
+    /// Rotatie dreapta
+    Node* aux = new Node(node->left_son->value);
+    if ( node == root_ )
+        root_ = aux;
+    else if ( node == node->parent->left_son)
+        {
+            node->parent->left_son = aux;
+            aux->parent = node->parent;
+        }
+    else if ( node == node->parent->right_son)
+        {
+            node->parent->right_son = aux;
+            aux->parent = node->parent;
+        }
+    aux->right_son = node;
+    if (node->left_son->left_son)
+    {
+        aux->left_son = node->left_son->left_son;
+        node->left_son->left_son->parent = aux;
+    }
+    node->parent = aux;
+    if ( node->left_son->right_son )
+        {
+        node->left_son->right_son->parent = node;
+        node->left_son = node->left_son->right_son;
+        }
+    else
+    {
+    node->left_son = nullptr;
+    delete node->left_son;
+    }
+    if (aux->left_son)
+        aux->left_son->height = heightCalc(aux->left_son);
+    aux->right_son->height = heightCalc(aux->right_son);
+    aux->height = heightCalc(aux);
+
+}
+
+    void RL(Node* node)
+{
+    /// Rotatie dreapta-stanga
+    RR(node->right_son);
+    LL(node);
+}
+
+    void LR(Node* node)
+{
+    /// Rotatie stanga-dreapta
+    LL(node->left_son);
+    RR(node);
+}
+
+void LL(Node* node)
+{
+    /// Rotatie stanga 
+    Node* aux = new Node(node->right_son->value);
+    if ( node == root_ )
+        root_ = aux;
+    else if ( node == node->parent->left_son)
+        {
+            node->parent->left_son = aux;
+        }
+    else if ( node == node->parent->right_son)
+        {
+            node->parent->right_son = aux;
+        }
+    aux->left_son = node;
+    if ( node->right_son->right_son ) 
+        aux->right_son = node->right_son->right_son;
+    aux->parent = node->parent;
+    node->parent = aux;
+    if ( node->right_son->right_son )
+    {
+        node->right_son->right_son->parent = aux;
+        aux->right_son = node->right_son->right_son;
+    }
+    if ( node->right_son->left_son )
+    {
+        node->right_son->left_son->parent = node;
+        node->right_son = node->right_son->left_son;
+    }
+    else 
+    {
+        node->right_son = nullptr;
+        delete node->right_son;
+    }
+    aux->left_son->height = heightCalc(aux->left_son);
+    if ( aux->right_son)
+        aux->right_son->height = heightCalc(aux->right_son);
+    aux->height = heightCalc(aux);
+}
+
     void Hminus(Node* node)
     {
         while ( node->parent )
